@@ -4,8 +4,7 @@ Helm chart for FerriteCMS
 ## Usage
 
 ```bash
-helm repo add ferritecms https://ferritecms.github.io/helm
-helm repo update
+helm pull oci://harbor.artichokenetwork.com/ferritecms/ferritecms
 helm install ferritecms ferritecms/ferritecms
 ```
 
