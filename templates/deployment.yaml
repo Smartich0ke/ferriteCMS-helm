@@ -1,0 +1,226 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "ferritecms.fullname" . }}
+  labels:
+    {{- include "ferritecms.labels" . | nindent 4 }}
+spec:
+  {{- if not .Values.autoscaling.enabled }}
+  replicas: {{ .Values.replicaCount }}
+  {{- end }}
+  selector:
+    matchLabels:
+      {{- include "ferritecms.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "ferritecms.selectorLabels" . | nindent 8 }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "ferritecms.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      volumes:
+        - name: storage-volume
+          persistentVolumeClaim:
+            claimName: {{ include "ferritecms.fullname" . }}-pvc
+      containers:
+        - name: {{ .Chart.Name }}
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          volumeMounts:
+            - name: storage-volume
+              mountPath: /var/www/html/storage/app/public
+          env:
+            - name: "APP_NAME"
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ include "ferritecms.fullname" . }}
+                  key: APP_NAME
+            - name: "APP_ENV"
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ include "ferritecms.fullname" . }}
+                  key: APP_ENV
+            - name: "APP_DEBUG"
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ include "ferritecms.fullname" . }}
+                  key: APP_DEBUG
+            - name: "APP_URL"
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ include "ferritecms.fullname" . }}
+                  key: APP_URL
+            - name: "LOG_CHANNEL"
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ include "ferritecms.fullname" . }}
+                  key: LOG_CHANNEL
+            - name: "LOG_LEVEL"
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ include "ferritecms.fullname" . }}
+                  key: LOG_LEVEL
+            - name: "DB_CONNECTION"
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ include "ferritecms.fullname" . }}
+                  key: DB_CONNECTION
+            - name: "DB_HOST"
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ include "ferritecms.fullname" . }}
+                  key: DB_HOST
+            - name: "DB_PORT"
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ include "ferritecms.fullname" . }}
+                  key: DB_PORT
+            - name: "DB_DATABASE"
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ include "ferritecms.fullname" . }}
+                  key: DB_DATABASE
+            - name: "DB_USERNAME"
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ include "ferritecms.fullname" . }}
+                  key: DB_USERNAME
+            - name: "DB_PASSWORD"
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ include "ferritecms.fullname" . }}
+                  key: DB_PASSWORD
+            - name: "CACHE_DRIVER"
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ include "ferritecms.fullname" . }}
+                  key: CACHE_DRIVER
+            - name: "SESSION_DRIVER"
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ include "ferritecms.fullname" . }}
+                  key: SESSION_DRIVER
+            - name: "QUEUE_CONNECTION"
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ include "ferritecms.fullname" . }}
+                  key: QUEUE_CONNECTION
+            - name: "REDIS_CLIENT"
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ include "ferritecms.fullname" . }}
+                  key: REDIS_CLIENT
+            - name: "REDIS_HOST"
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ include "ferritecms.fullname" . }}
+                  key: REDIS_HOST
+            - name: "REDIS_PASSWORD"
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ include "ferritecms.fullname" . }}
+                  key: REDIS_PASSWORD
+            - name: "REDIS_PORT"
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ include "ferritecms.fullname" . }}
+                  key: REDIS_PORT
+            - name: "MAIL_MAILER"
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ include "ferritecms.fullname" . }}
+                  key: MAIL_MAILER
+            - name: "MAIL_HOST"
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ include "ferritecms.fullname" . }}
+                  key: MAIL_HOST
+            - name: "MAIL_PORT"
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ include "ferritecms.fullname" . }}
+                  key: MAIL_PORT
+            - name: "MAIL_USERNAME"
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ include "ferritecms.fullname" . }}
+                  key: MAIL_USERNAME
+            - name: "MAIL_PASSWORD"
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ include "ferritecms.fullname" . }}
+                  key: MAIL_PASSWORD
+            - name: "MAIL_ENCRYPTION"
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ include "ferritecms.fullname" . }}
+                  key: MAIL_ENCRYPTION
+            - name: "MAIL_FROM_ADDRESS"
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ include "ferritecms.fullname" . }}
+                  key: MAIL_FROM_ADDRESS
+            - name: "MAIL_FROM_NAME"
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ include "ferritecms.fullname" . }}
+                  key: MAIL_FROM_NAME
+            - name: "IMAGE_CDN_URL"
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ include "ferritecms.fullname" . }}
+                  key: IMAGE_CDN_URL
+            - name: "CDN_URL"
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ include "ferritecms.fullname" . }}
+                  key: CDN_URL
+            - name: APP_KEY
+              valueFrom:
+                {{ if .Values.appKeySecret.existingSecretName }}
+                secretKeyRef:
+                  name: {{ .Values.appKeySecret.existingSecretName }}
+                  key: APP_KEY
+                {{ else }}
+                secretKeyRef:
+                  name: {{ include "ferritecms.fullname" . }}
+                  key: APP_KEY
+                {{ end }}
+          ports:
+            - name: http
+              containerPort: {{ .Values.service.port }}
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /
+              port: http
+          readinessProbe:
+            httpGet:
+              path: /
+              port: http
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+      
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}

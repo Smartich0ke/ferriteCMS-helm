@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: "{{ include "ferritecms.fullname" . }}-test-connection"
+  labels:
+    {{- include "ferritecms.labels" . | nindent 4 }}
+  annotations:
+    "helm.sh/hook": test
+spec:
+  containers:
+    - name: wget
+      image: busybox
+      command: ['wget']
+      args: ['{{ include "ferritecms.fullname" . }}:{{ .Values.service.port }}']
+  restartPolicy: Never
