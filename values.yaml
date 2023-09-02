@@ -22,6 +22,17 @@ appKeySecret:
   existingSecretName: ""
   appKey: ""
 
+# Initial admin user settings
+initialAdminUser:
+  name: "admin"
+  email: "admin@example.com"
+  password: "ChangeMeNow!"
+
+  existingSecretName: ""
+  nameKey: "name"
+  emailKey: "email"
+  passwordKey: "password"
+
 # Log settings
 logChannel: "stack"
 logLevel: "warning"

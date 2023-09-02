@@ -31,6 +31,48 @@ spec:
         - name: storage-volume
           persistentVolumeClaim:
             claimName: {{ include "ferritecms.fullname" . }}-pvc
+      initContainers:
+        - name: create-initial-user
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          workingDir: /var/www/html
+          command: ['php']
+          args: ['artisan', 'db:seed', '--class=InitialUserSeeder']
+          volumeMounts:
+            - name: storage-volume
+              mountPath: /var/www/html/storage/app/public
+          env:
+            - name: "INITIAL_ADMIN_NAME"
+              valueFrom:
+                secretKeyRef:
+                {{ if .Values.initialAdminUser.existingSecretName }}
+                  name: {{ .Values.initialAdminUser.existingSecretName }}
+                  key: {{ .Values.initialAdminUser.nameKey }}
+                {{ else }}
+                  name: {{ include "ferritecms.fullname" . }}-initial-admin-user
+                  key: 'name'
+                {{ end }}
+            - name: "INITIAL_ADMIN_EMAIL"
+              valueFrom:
+                secretKeyRef:
+                {{ if .Values.initialAdminUser.existingSecretName }}
+                  name: {{ .Values.initialAdminUser.existingSecretName }}
+                  key: {{ .Values.initialAdminUser.emailKey }}
+                {{ else }}
+                  name: {{ include "ferritecms.fullname" . }}-initial-admin-user
+                  key: 'email'
+                {{ end }}
+            - name: "INITIAL_ADMIN_PASSWORD"
+              valueFrom:
+                secretKeyRef:
+                {{ if .Values.initialAdminUser.existingSecretName }}
+                  name: {{ .Values.initialAdminUser.existingSecretName }}
+                  key: {{ .Values.initialAdminUser.passwordKey }}
+                {{ else }}
+                  name: {{ include "ferritecms.fullname" . }}-initial-admin-user
+                  key: 'password'
+                {{ end }}
+                
       containers:
         - name: {{ .Chart.Name }}
           securityContext:
