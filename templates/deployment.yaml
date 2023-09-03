@@ -31,6 +31,9 @@ spec:
         - name: storage-volume
           persistentVolumeClaim:
             claimName: {{ include "ferritecms.fullname" . }}-pvc
+        - name: analytics-volume
+          configMap:
+            name: {{ .Values.analytics.google.configMapName}}
       initContainers:
         - name: create-initial-user
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
@@ -112,6 +115,8 @@ spec:
           volumeMounts:
             - name: storage-volume
               mountPath: /var/www/html/storage/app/public
+            - name: analytics-volume
+              mountPath: /var/www/html/storage/app/analytics/service-account-credentials.json
           env:
             - name: "APP_NAME"
               valueFrom:
@@ -258,6 +263,21 @@ spec:
                 configMapKeyRef:
                   name: {{ include "ferritecms.fullname" . }}
                   key: CDN_URL
+            - name: "ANALYTICS_PROPERTY_ID"
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ include "ferritecms.fullname" . }}
+                  key: ANALYTICS_PROPERTY_ID
+            - name: "ANALYTICS_MEASUREMENT_ID"
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ include "ferritecms.fullname" . }}
+                  key: ANALYTICS_MEASUREMENT_ID
+            - name: "ANALYTICS_STREAM_ID"
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ include "ferritecms.fullname" . }}
+                  key: ANALYTICS_STREAM_ID
             - name: APP_KEY
               valueFrom:
                 {{ if .Values.appKeySecret.existingSecretName }}

@@ -84,6 +84,13 @@ persistence:
 imageCdnUrl: "null"
 cdnUrl: "null"
 
+analytics:
+  google:
+    propertyId: "null"
+    measurementId: "null"
+    streamId: "null"
+    configMapName: "null"
+
 image:
   repository: harbor.artichokenetwork.com/ferritecms/ferrite
   pullPolicy: IfNotPresent

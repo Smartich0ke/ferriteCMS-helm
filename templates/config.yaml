@@ -38,3 +38,8 @@ data:
 
   IMAGE_CDN_URL: '{{ .Values.imageCdnUrl }}'
   CDN_URL: '{{ .Values.cdnUrl }}'
+
+  ANALYTICS_PROPERTY_ID: '{{ .Values.analytics.google.propertyId }}'
+
+  ANALYTICS_MEASUREMENT_ID: '{{ .Values.analytics.google.measurementId }}'
+  ANALYTICS_STREAM_ID: '{{ .Values.analytics.google.streamId }}'
