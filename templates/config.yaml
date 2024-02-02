@@ -43,3 +43,6 @@ data:
 
   ANALYTICS_MEASUREMENT_ID: '{{ .Values.analytics.google.measurementId }}'
   ANALYTICS_STREAM_ID: '{{ .Values.analytics.google.streamId }}'
+
+  CONTACT_EMAIL: '{{ .Values.contact.email }}'
+  CONTACT_PHONE: '{{ .Values.contact.phone }}'

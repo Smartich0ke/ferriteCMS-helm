@@ -91,6 +91,10 @@ analytics:
     streamId: "null"
     configMapName: "null"
 
+contact:
+  email: "null"
+  phone: "null"
+
 image:
   repository: harbor.artichokenetwork.com/ferritecms/ferrite
   pullPolicy: IfNotPresent
