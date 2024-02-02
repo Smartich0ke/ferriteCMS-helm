@@ -278,6 +278,16 @@ spec:
                 configMapKeyRef:
                   name: {{ include "ferritecms.fullname" . }}
                   key: ANALYTICS_STREAM_ID
+            - name: "CONTACT_EMAIL"
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ include "ferritecms.fullname" . }}
+                  key: CONTACT_EMAIL
+            - name: "CONTACT_PHONE"
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ include "ferritecms.fullname" . }}
+                  key: CONTACT_PHONE
             - name: APP_KEY
               valueFrom:
                 {{ if .Values.appKeySecret.existingSecretName }}
